@@ -6,8 +6,8 @@ const path = require('path');
 // 读取的时候默认读 默认64k，encoding 读取默认都是buffer
 let ReadStream = require('./ReadStream');
 const readFilePath = path.resolve(__dirname, './1.txt');
-let rs = new ReadStream(readFilePath, {
-  highWaterMark: 3, // 字节
+let rs = fs.createReadStream(readFilePath, {
+  highWaterMark: 11, // 字节
   flags:'r',
   autoClose:true, // 默认读取完毕后自动关闭
   start:0,
