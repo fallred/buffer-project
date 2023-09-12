@@ -13,4 +13,4 @@ const buf4 = Buffer.from([1, 2, 3]);
 console.log('buf4:', buf4);// buf4: <Buffer 01 02 03>
 
 const buf5 = Buffer.from('你好啊');
-console.log('buf5:', buf5);// buf5: <Buffer e7 8f a0 e5 b3 b0 e5 9f b9 e8 ae ad>
+console.log('buf5:', buf5);// buf5: buf5: <Buffer e4 bd a0 e5 a5 bd e5 95 8a>

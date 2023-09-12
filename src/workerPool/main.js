@@ -1,7 +1,6 @@
 
 const WorkerPool = require('./workerPool');
 const asyncSelectPool = new WorkerPool(__dirname + '/worker', 1, false);
-global.asyncSelectPool = asyncSelectPool;
 const registryConfig = require('./registryConfig').getInstance();
 
 function run() {
