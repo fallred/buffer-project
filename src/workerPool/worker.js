@@ -1,4 +1,7 @@
 const { parentPort, workerData } = require('worker_threads');
+const mqttHelper = require('./mqtt/mqttHelper');
+const frontClientCache = require('./cache/frontClientCache');
+
 const registryConfig = require('./registryConfig').getInstance();
 
 // 监听主线程发来的消息
@@ -30,13 +33,23 @@ parentPort.on('message', (message) => {
 });
 */
 
-async function workerRun(workerData) {
+function notifyMain(notifyData) {
+    parentPort.postMessage(notifyData);
 }
 
-parentPort.on('message', (workerData) => {
-    log.info(`on message: ${workerData}`);
+async function workerRun(workerData) {
+    // 模拟登陆
+    mqttHelper.initMqttClient();
+
+    setTimeout(() => {
+        const channel = frontClientCache.frontConnection.channel;
+    }, 50000);
+}
+
+parentPort.on('message', (message) => {
+    console.log(`on message: ${message}`);
     if (message.type === 'init') {
-        workerRun(workerData);
+        workerRun(message);
         parentPort.postMessage('11');
     }
     // 更新全局数据，cache缓存等
@@ -46,5 +59,10 @@ parentPort.on('message', (workerData) => {
             const registryListTemp = registryConfig.getRegistryList();
             console.log(`worker on message registryListTemp: ${JSON.stringify(registryListTemp)}`);
         }
+    }
+
+    if (message.type === 'updateWsCache') {
+        const {updateData} = message ?? {};
+        frontClientCache.updateFrontClient(updateData);
     }
 });

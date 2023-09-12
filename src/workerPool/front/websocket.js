@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
-const frontConnection = require('../cache/frontConnection');
+const frontClientCache = require('../cache/frontClientCache');
+const notifyWorkerAndMain = require('../notify');
 
 const portRange = [13323, 13423];
 const Host = 'localhost';
@@ -33,13 +34,16 @@ const WebSocketServer = {
   },
   handleConnection(connection) {
     this.client = connection;
-    frontConnection.channel = connection;
+    frontClientCache.frontConnection.channel = connection;
+    notifyWorkerAndMain({ type: 'updateWsCache', updateData: frontClientCache.frontConnection });
     connection.send('欢迎连接到websocket服务器');
     connection.on('close', () => {
       this.client = null;
-      frontConnection.channel = null;
+      frontClientCache.frontConnection.channel = null;
+      notifyWorkerAndMain({ type: 'updateWsCache', updateData: frontClientCache.frontConnection });
       console.log(`Client disconnected. `);
     });
+
   },
   async stopServer() {
     await new Promise(resolve => this.server.close(resolve));
