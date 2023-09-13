@@ -6,7 +6,11 @@ function notifyWorkerAndMain(notifyData) {
             worker.postMessage(notifyData);
         });
     } else {
-        parentPort.postMessage(notifyData);
+        // parentPort.postMessage(notifyData);
+        const kWorkerChannel = 'kWorkerChannel';
+        poolInstance.workers.forEach(worker => {
+            worker[kWorkerChannel].port1.postMessage(notifyData);
+        });
     }
 }
 module.exports = notifyWorkerAndMain;

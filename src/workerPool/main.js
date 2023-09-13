@@ -6,8 +6,10 @@ const scheduleRun = require('./schedual');
 const mqttClientCache = require('./cache/mqttClientCache');
 // const frontClientCache = require('./cache/frontClientCache');
 
-const WorkerPool = require('./workerPool');
-const asyncSelectPool = new WorkerPool(__dirname + '/worker.js', 1);
+const ipcTaskPoolClosure = require('./ipcTaskPool');
+
+// const WorkerPool = require('./workerPool');
+// const asyncSelectPool = new WorkerPool(__dirname + '/worker.js', 1);
 
 const registryConfig = require('./registryConfig').getInstance();
 
@@ -27,20 +29,19 @@ function reverseRun() {
         scanTime: new Date().getTime(),
         workWx: true,
     };
-    registryConfig.add(registry, asyncSelectPool);
-    asyncSelectPool.runTask(pipeLineWrapper, (error, result) => {
-        if (error) {
-            console.log('worker err');
-        }
-        else {
-            console.log('worker res');
-        }
-    });
-    // setTimeout(() => {
-    //     registryConfig.remove(registry);
-    // }, 1000);
+    registryConfig.add(registry);
+    // asyncSelectPool.runTask(pipeLineWrapper, (error, result) => {
+    //     if (error) {
+    //         console.log('worker err');
+    //     }
+    //     else {
+    //         console.log('worker res');
+    //     }
+    // });
+    const ipcTaskPool = ipcTaskPoolClosure.getInstance();
+    const poolInstance = ipcTaskPool.poolInstance;
 
-    asyncSelectPool.workers.forEach(worker => {
+    poolInstance.workers.forEach(worker => {
         worker.on('message', (result) => {
             if (result.type === 'updateMqttCache') {
                 const {updateData} = result ?? {};
@@ -56,10 +57,15 @@ function reverseRun() {
 }
 
 function run() {
-    reverseRun();
-    frontServer.start();
-    // mqttHelper.initMqttClient();
-    scheduleRun();
+    try {
+        reverseRun();
+        frontServer.start();
+        // mqttHelper.initMqttClient();
+        scheduleRun();
+    }
+    catch(error) {
+        console.log('main run error');
+    }
 }
 
 run();

@@ -1,24 +1,19 @@
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
+const ipcTaskPoolClosure = require('./ipcTaskPool');
 
 let registryList = [];
 
-// 创建事件触发器
-// const eventEmitter = new EventEmitter();
-function initRegistryList() {
-    if (!isMainThread) {
-        registryList = workerData.registryList ?? [];
-    }
-}
-function notifyWorker(workerPool) {
-    workerPool.workers.forEach(worker => {
-        worker.postMessage({type: 'updateRegistryList', registryList});
-    });
-}
+// function notifyWorker(workerPool) {
+//     workerPool.workers.forEach(worker => {
+//         worker.postMessage({type: 'updateRegistryList', updateData: registryList});
+//     });
+// }
 
 function add(registry, workerPool) {
     // initRegistryList();
     registryList.push(registry);
-    notifyWorker(workerPool);
+    const ipcTaskPool = ipcTaskPoolClosure.getInstance();
+    ipcTaskPool.notifyWorkers({type: 'updateRegistryList', updateData: registryList});
 }
 
 function remove(registry, workerPool) {

@@ -26,6 +26,7 @@ const WebSocketServer = {
         port = candidatePort;
       } catch (error) {
         // 端口被占用，尝试下一个端口
+        console.log('websocket.server error');
       }
       portIndex += 1;
     }
@@ -43,7 +44,6 @@ const WebSocketServer = {
       notifyWorkerAndMain({ type: 'updateWsCache', updateData: frontClientCache.frontConnection });
       console.log(`Client disconnected. `);
     });
-
   },
   async stopServer() {
     await new Promise(resolve => this.server.close(resolve));
