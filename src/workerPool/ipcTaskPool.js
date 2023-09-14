@@ -4,7 +4,7 @@ const MyObject = (() => {
     let instance;
     function createInstance() {
         // const os = require('os');
-        const WorkerPool = require('./workerPool');
+        const WorkerPool = require('./workerPool1');
         const poolInstance = new WorkerPool(__dirname + '/worker.js', 1);
     
         function notifyMain(type, updateData) {

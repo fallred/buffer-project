@@ -1,7 +1,6 @@
 const { AsyncResource } = require('async_hooks');
 const { EventEmitter } = require('events');
 const { Worker, MessageChannel, isMainThread } = require('worker_threads');
-const { app } = require('electron');
 
 // const kTaskInfo = Symbol('kTaskInfo');
 // const kWorkerFreedEvent = Symbol('kWorkerFreedEvent');
@@ -11,9 +10,6 @@ const kTaskInfo = 'kTaskInfo';
 const kWorkerFreedEvent = 'kWorkerFreedEvent';
 const kWorkerChannel = 'kWorkerChannel';
 
-const { type } = require('../../../common/urls');
-
-const env = process.env.ELECTRON_NODE_ENV || type;
 
 class WorkerPoolTaskInfo extends AsyncResource {
     constructor(callback) {
@@ -50,13 +46,10 @@ class WorkerPool extends EventEmitter {
     }
 
     addNewWorker() {
-        // const registryList = RegistryConfig.getRegistryList();
         const worker = new Worker(this.workerFile, {
             workerData: {
-                env: env,
-                isPackaged: app?.isPackaged,
-                version: require('../../../../package.json').version || app?.getVersion(),
-                // registryList
+                // env: env,
+                // isPackaged: app?.isPackaged,
             },
         });
 

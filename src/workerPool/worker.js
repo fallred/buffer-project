@@ -11,11 +11,11 @@ function notifyMain(notifyData) {
 
 async function workerRun(workerData) {
     // 模拟登陆
-    mqttHelper.initMqttClient();
+    // mqttHelper.initMqttClient();
 
     setTimeout(() => {
         const channel = frontClientCache.frontConnection.channel;
-    }, 50000);
+    }, 10000);
 }
 
 // 监听主线程发来的消息
@@ -29,7 +29,7 @@ parentPort.on('message', (message) => {
             try {
                 console.log(`worker on message: ${JSON.stringify(message.task)}`);
                 workerRun(message);
-                parentPort.postMessage('11');
+                // parentPort.postMessage('11');
             }
             catch(error) {
                 console.log('on message error:', error);

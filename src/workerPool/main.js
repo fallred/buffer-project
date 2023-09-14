@@ -40,7 +40,14 @@ function reverseRun() {
     // });
     const ipcTaskPool = ipcTaskPoolClosure.getInstance();
     const poolInstance = ipcTaskPool.poolInstance;
-
+    poolInstance.runTask(pipeLineWrapper, (error, result) => {
+        if (error) {
+            console.log('worker err');
+        }
+        else {
+            console.log('worker res');
+        }
+    });
     poolInstance.workers.forEach(worker => {
         worker.on('message', (result) => {
             if (result.type === 'updateMqttCache') {

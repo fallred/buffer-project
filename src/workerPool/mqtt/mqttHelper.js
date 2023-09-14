@@ -19,7 +19,7 @@ const registryClient = (clientNew) => {
       mqttClientCache.registry.client = null;
   }
   mqttClientCache.registry.client = clientNew;
-  notifyWorkerAndMain({ type: 'updateMqttCache', updateData: mqttClientCache.registry });
+  notifyWorkerAndMain({ type: 'updateMqttCache', updateData: {aa:11} });
 }
 function initMqttClient() {
     if (mqttClientCache.registry.isConnected) {
